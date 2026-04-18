@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蜜语APP</title>
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #13090c;
+  --bg-soft: #241116;
+  --bg-card: rgba(38, 17, 23, 0.92);
+  --panel: #311921;
+  --line: rgba(255, 148, 177, 0.18);
+  --line-strong: rgba(255, 148, 177, 0.35);
+  --text: #fff4f6;
+  --text-soft: #dcb5bf;
+  --text-dim: #a07781;
+  --accent: #ff5f8f;
+  --accent-2: #ff8a74;
+  --accent-3: #ffd38e;
+  --ok: #69d39c;
+  --danger: #ff6b78;
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.32);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+}
+
+body {
+  font-family: "Microsoft YaHei", sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(255, 96, 143, 0.26), transparent 32%),
+    linear-gradient(180deg, #1c0c12 0%, #0b0608 100%);
+  color: var(--text);
+  padding: 12px;
+}
+
+.app-shell {
+  width: min(100%, 430px);
+  margin: 0 auto;
+}
+
+.phone {
+  width: 100%;
+  aspect-ratio: 390 / 844;
+  max-height: 844px;
+  border-radius: 32px;
+  background:
+    linear-gradient(180deg, rgba(59, 26, 36, 0.98), rgba(17, 9, 12, 0.98)),
+    #12070a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.phone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 135, 168, 0.18), transparent 28%),
+    radial-gradient(circle at 100% 20%, rgba(255, 178, 121, 0.12), transparent 30%);
+  pointer-events: none;
+}
+
+.topbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(26, 12, 17, 0.88), rgba(26, 12, 17, 0.52));
+  backdrop-filter: blur(18px);
+}
+
+.back-btn,
+.top-action {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.back-btn.hidden,
+.top-action.hidden {
+  visibility: hidden;
+}
+
+.title-wrap {
+  min-width: 0;
+  flex: 1;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  display: none;
+  flex: 1;
+  min-height: 0;
+}
+
+.page.active {
+  display: block;
+}
+
+.page-scroll {
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.page-scroll::-webkit-scrollbar,
+.chat-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.page-scroll::-webkit-scrollbar-thumb,
+.chat-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+.hero {
+  padding: 18px;
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 96, 143, 0.28), rgba(255, 138, 116, 0.18)),
+    var(--bg-card);
+  border: 1px solid var(--line-strong);
+  margin-bottom: 16px;
+}
+
+.hero-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.hero-text {
+  margin-top: 8px;
+  line-height: 1.65;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 2px 12px;
+}
+
+.section-title h3 {
+  font-size: 15px;
+}
+
+.section-title span {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.girl-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.girl-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.girl-cover {
+  aspect-ratio: 3 / 4;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 96, 143, 0.3), rgba(15, 9, 11, 0.25)),
+    #2a1118;
+}
+
+.girl-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.emoji-cover {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+}
+
+.status-pill {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  background: rgba(9, 10, 10, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f8fbfa;
+}
+
+.status-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 6px;
+  background: var(--ok);
+}
+
+.girl-info {
+  padding: 12px 12px 14px;
+}
+
+.girl-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.girl-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.girl-age {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.girl-stage {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--accent-3);
+}
+
+.girl-intro {
+  margin-top: 8px;
+  min-height: 34px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-soft);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.tag {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 95, 143, 0.12);
+  color: #ffc9d5;
+  border: 1px solid rgba(255, 95, 143, 0.16);
+}
+
+.profile-page {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.profile-cover {
+  aspect-ratio: 4 / 5;
+  background:
+    linear-gradient(180deg, rgba(255, 96, 143, 0.2), rgba(16, 9, 12, 0.1)),
+    #33161f;
+  overflow: hidden;
+}
+
+.profile-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-body {
+  padding: 18px 16px 22px;
+}
+
+.profile-avatar-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: -36px;
+}
+
+.profile-avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 3px solid #1c0d12;
+  background: #311921;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-meta h2 {
+  font-size: 22px;
+}
+
+.profile-meta p {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.profile-stats {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.stat-box {
+  padding: 12px 10px;
+  border-radius: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  text-align: center;
+}
+
+.stat-box strong {
+  display: block;
+  font-size: 17px;
+  color: var(--accent-3);
+}
+
+.stat-box span {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.profile-text-card,
+.mine-card,
+.message-card,
+.moment-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+}
+
+.profile-text-card {
+  margin-top: 16px;
+  padding: 16px;
+}
+
+.profile-text-card h4,
+.mine-card h4 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.profile-text-card p,
+.mine-card p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 16px;
+  padding: 13px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.btn-primary {
+  color: white;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+.btn-secondary {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+}
+
+.message-list,
+.moment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message-card {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(255, 95, 143, 0.28), rgba(255, 138, 116, 0.18));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  position: relative;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.unread {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: white;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.message-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.message-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.message-head strong {
+  font-size: 15px;
+}
+
+.message-head span {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.message-preview {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.page-chat {
+  display: none;
+  flex-direction: column;
+}
+
+.page-chat.active {
+  display: flex;
+}
+
+.chat-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.mini-pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+.chat-stage {
+  margin: 12px 16px 0;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.chat-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bubble-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.bubble-row.me {
+  justify-content: flex-end;
+}
+
+.bubble-row.me .bubble-wrap {
+  align-items: flex-end;
+}
+
+.bubble-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 76%;
+}
+
+.bubble-time {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.bubble {
+  border-radius: 18px;
+  padding: 11px 13px;
+  line-height: 1.65;
+  font-size: 13px;
+  word-break: break-word;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.bubble-row.me .bubble {
+  background: linear-gradient(135deg, rgba(255, 95, 143, 0.94), rgba(255, 138, 116, 0.94));
+  border-color: transparent;
+  color: white;
+}
+
+.bubble-image,
+.moment-image {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #231016;
+}
+
+.bubble-image img,
+.moment-image img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.bubble-image.placeholder,
+.moment-image.placeholder {
+  min-height: 132px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  color: var(--text-soft);
+  font-size: 12px;
+  text-align: center;
+}
+
+.transfer-card {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 211, 142, 0.96), rgba(255, 177, 86, 0.96));
+  color: #352204;
+}
+
+.transfer-card strong {
+  display: block;
+  font-size: 18px;
+  margin-top: 4px;
+}
+
+.typing {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffbdc8;
+  animation: typing 1s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+@keyframes typing {
+  0%, 80%, 100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  40% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.quick-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 16px 10px;
+}
+
+.quick-bar button {
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-soft);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.chat-toolbar {
+  border-top: 1px solid var(--line);
+  padding: 10px 12px 14px;
+  background: linear-gradient(180deg, rgba(24, 12, 17, 0.86), rgba(24, 12, 17, 1));
+}
+
+.emoji-bar {
+  display: none;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+
+.emoji-bar.show {
+  display: flex;
+}
+
+.emoji-bar button {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-icon,
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.send-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-color: transparent;
+}
+
+.chat-input {
+  flex: 1;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  padding: 11px 14px;
+  font-size: 13px;
+  outline: none;
+}
+
+.chat-input::placeholder {
+  color: var(--text-dim);
+}
+
+.moment-card {
+  padding: 14px;
+}
+
+.moment-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.moment-head strong {
+  font-size: 14px;
+}
+
+.moment-head span {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.moment-text {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+.moment-gallery {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.moment-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.mine-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.mine-box {
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+}
+
+.mine-box strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 19px;
+  color: var(--accent-3);
+}
+
+.mine-box span {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.mine-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-item {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.menu-item span:last-child {
+  margin-left: auto;
+  color: var(--text-dim);
+}
+
+.navbar {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  padding: 8px 8px 10px;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(24, 12, 17, 0.72), rgba(24, 12, 17, 1));
+}
+
+.nav-item {
+  border: 0;
+  background: transparent;
+  color: var(--text-dim);
+  border-radius: 16px;
+  padding: 8px 0;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.nav-item strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 3px;
+}
+
+.nav-item.active {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.modal {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(9, 8, 10, 0.76);
+  z-index: 3;
+  padding: 18px;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-card {
+  width: 100%;
+  padding: 22px 18px 18px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #311921, #1a0d12);
+  border: 1px solid var(--line-strong);
+}
+
+.modal-card h3 {
+  font-size: 18px;
+}
+
+.modal-card p {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+.money-input {
+  width: 100%;
+  margin-top: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  padding: 14px 16px;
+  font-size: 20px;
+  outline: none;
+}
+
+.empty-state {
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 12px;
+  line-height: 1.8;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed var(--line);
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <div class="phone">
+    <div class="topbar">
+      <button class="back-btn hidden" id="back-btn" type="button">←</button>
+      <div class="title-wrap">
+        <div class="title" id="top-title">发现</div>
+        <div class="subtitle" id="top-subtitle">在线裸聊匹配中</div>
+      </div>
+      <button class="top-action hidden" id="top-action" type="button">⋯</button>
+    </div>
+
+    <div class="page active" id="page-discover">
+      <div class="page-scroll">
+        <div class="hero">
+          <div class="hero-title">蜜语</div>
+          <div class="hero-text">这是一个首楼内直接游玩的裸聊 APP。点开头像看资料，进私聊、要自拍、转账、刷朋友圈，都在这个界面里完成，不需要再去用酒馆底部输入框。</div>
+          <div class="hero-tags">
+            <span class="chip">实时私聊</span>
+            <span class="chip">可发图消息</span>
+            <span class="chip">转账互动</span>
+            <span class="chip">朋友圈动态</span>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <h3>在线女生</h3>
+          <span id="discover-count">0 人在线</span>
+        </div>
+        <div class="girl-grid" id="girl-grid"></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-profile">
+      <div class="profile-page">
+        <div class="profile-cover" id="profile-cover"></div>
+        <div class="profile-body">
+          <div class="profile-avatar-row">
+            <div class="profile-avatar" id="profile-avatar"></div>
+            <div class="profile-meta">
+              <h2 id="profile-name"></h2>
+              <p id="profile-meta"></p>
+            </div>
+          </div>
+
+          <div class="profile-stats">
+            <div class="stat-box">
+              <strong id="profile-like">0</strong>
+              <span>好感</span>
+            </div>
+            <div class="stat-box">
+              <strong id="profile-desire">0</strong>
+              <span>裸聊意愿</span>
+            </div>
+            <div class="stat-box">
+              <strong id="profile-stage">试探期</strong>
+              <span>阶段</span>
+            </div>
+          </div>
+
+          <div class="profile-text-card">
+            <h4>个人简介</h4>
+            <p id="profile-bio"></p>
+            <div class="tag-list" id="profile-tags"></div>
+          </div>
+
+          <div class="profile-text-card">
+            <h4>她现在想要什么</h4>
+            <p id="profile-want"></p>
+          </div>
+
+          <div class="action-row">
+            <button class="btn btn-secondary" id="profile-moments" type="button">看她朋友圈</button>
+            <button class="btn btn-primary" id="profile-chat" type="button">进入私聊</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-messages">
+      <div class="page-scroll">
+        <div class="section-title">
+          <h3>消息列表</h3>
+          <span>点开继续聊</span>
+        </div>
+        <div class="message-list" id="message-list"></div>
+      </div>
+    </div>
+
+    <div class="page page-chat" id="page-chat">
+      <div class="chat-stage" id="chat-stage"></div>
+      <div class="quick-bar" id="quick-bar"></div>
+      <div class="chat-list" id="chat-list"></div>
+      <div class="chat-toolbar">
+        <div class="emoji-bar" id="emoji-bar"></div>
+        <div class="input-row">
+          <button class="input-icon" id="emoji-toggle" type="button">☺</button>
+          <input class="chat-input" id="chat-input" type="text" placeholder="直接在 APP 里回复她……">
+          <button class="input-icon" id="transfer-open" type="button">¥</button>
+          <button class="send-btn" id="send-btn" type="button">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-moments">
+      <div class="page-scroll">
+        <div class="section-title">
+          <h3>朋友圈</h3>
+          <span>由 AI 自己生成</span>
+        </div>
+        <div class="moment-list" id="moment-list"></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-mine">
+      <div class="page-scroll">
+        <div class="mine-grid">
+          <div class="mine-box">
+            <span>我的余额</span>
+            <strong id="wallet-balance">¥0</strong>
+          </div>
+          <div class="mine-box">
+            <span>累计转账</span>
+            <strong id="wallet-spent">¥0</strong>
+          </div>
+        </div>
+
+        <div class="mine-card" style="padding:16px;margin-bottom:12px;">
+          <h4>当前玩法</h4>
+          <p>这张卡的核心目标就是冲着裸聊去。普通寒暄只用来铺垫，关系升温后会自然进入自拍、语音、视频邀请和更露骨的互动；真正的聊天过程全部在首楼 APP 里完成。</p>
+        </div>
+
+        <div class="mine-menu">
+          <div class="menu-item"><span>💬</span><span>聊天在 APP 内发送</span><span>已启用</span></div>
+          <div class="menu-item"><span>🖼</span><span>wimg/img 插图支持</span><span>已接入</span></div>
+          <div class="menu-item"><span>🌸</span><span>朋友圈由 AI 自行刷新</span><span>已接入</span></div>
+          <div class="menu-item"><span>💸</span><span>转账会影响角色反应</span><span>已接入</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar">
+      <button class="nav-item active" data-page="discover" type="button"><strong>♡</strong>发现</button>
+      <button class="nav-item" data-page="messages" type="button"><strong>✉</strong>消息</button>
+      <button class="nav-item" data-page="moments" type="button"><strong>☼</strong>朋友圈</button>
+      <button class="nav-item" data-page="mine" type="button"><strong>☻</strong>我的</button>
+    </div>
+
+    <div class="modal" id="transfer-modal">
+      <div class="modal-card">
+        <h3 id="transfer-title">转账</h3>
+        <p>金额会影响她的态度。小额更像打赏，大额会显著加快升温，但角色风格不同，回应方式也会不同。</p>
+        <input class="money-input" id="transfer-input" type="number" min="1" step="1" placeholder="输入金额">
+        <div class="action-row" style="margin-top:16px;">
+          <button class="btn btn-secondary" id="transfer-cancel" type="button">取消</button>
+          <button class="btn btn-primary" id="transfer-confirm" type="button">确认转账</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ROLE_META = [
+  {
+    key: "林晓柔",
+    id: "linxiaorou",
+    name: "林晓柔",
+    age: 20,
+    emoji: "🌸",
+    title: "邻家甜妹",
+    tags: ["撒娇", "黏人", "软糯"],
+    bio: "大二学生，聊天时爱撒娇，表面羞，熟了以后会一边脸红一边主动发更私密的内容。",
+    want: "想被耐心哄着，喜欢一点点升温，再顺势过渡到自拍和视频。"
+  },
+  {
+    key: "苏玥",
+    id: "suyue",
+    name: "苏玥",
+    age: 28,
+    emoji: "🔥",
+    title: "成熟御姐",
+    tags: ["掌控", "强势", "主导"],
+    bio: "广告公司高管，回复直接，喜欢掌控聊天节奏。她不会浪费时间，觉得你合胃口才会更主动。",
+    want: "想看你够不够懂事，够不够上道，再决定要不要把尺度彻底放开。"
+  },
+  {
+    key: "沈念",
+    id: "shennian",
+    name: "沈念",
+    age: 19,
+    emoji: "🌙",
+    title: "清纯学妹",
+    tags: ["害羞", "慢热", "配合"],
+    bio: "看起来像乖乖女，实际也是冲着裸聊来的，只是嘴上不敢承认，需要你先把她聊热。",
+    want: "想被温柔带着走，想先被夸、被哄，慢慢才肯把更私密的欲望说出口。"
+  },
+  {
+    key: "叶桃",
+    id: "yetao",
+    name: "叶桃",
+    age: 25,
+    emoji: "🍑",
+    title: "火辣主动",
+    tags: ["挑逗", "大胆", "会玩"],
+    bio: "一上来就会试探你的底线，喜欢说得露骨，也喜欢看你能不能接住她的节奏。",
+    want: "想快速进入主题，如果你够会聊，她会很快从挑逗进入更直接的裸聊推进。"
+  },
+  {
+    key: "方慧",
+    id: "fanghui",
+    name: "方慧",
+    age: 32,
+    emoji: "💼",
+    title: "温柔大姐姐",
+    tags: ["成熟", "包容", "慢炖"],
+    bio: "擅长让人放松，会在温柔气氛里把尺度一点点加深，越聊越黏，越聊越会宠你。",
+    want: "想被认真对待，喜欢长一点的私聊，等气氛足够浓再切进更露骨的内容。"
+  }
+];
+
+const QUICK_REPLIES = ["想看你现在的样子", "夸她几句", "继续暧昧", "想视频", "今晚想裸聊"];
+const EMOJIS = ["😘", "🥵", "😏", "🫦", "💋", "💦", "🔥", "❤️", "🙈", "😳"];
+
+function defaultRole(meta, extra) {
+  return Object.assign({
+    id: meta.id,
+    名称: meta.name,
+    年龄: meta.age,
+    头像: "",
+    封面: "",
+    emoji: meta.emoji,
+    类型: meta.title,
+    标签: meta.tags.slice(),
+    简介: meta.bio,
+    当前想法: meta.want,
+    当前状态: "在线，可私聊",
+    好感度: 15,
+    裸聊意愿: 10,
+    聊天次数: 0,
+    裸聊次数: 0,
+    转账收入: 0,
+    未读数: 0,
+    关系阶段: "试探期",
+    最后消息: "点开头像看看她的资料",
+    最后时间: "",
+    聊天记录: [
+      {
+        role: "assistant",
+        type: "text",
+        text: "点开我的头像先看看资料呀，合胃口再进来聊。",
+        time: ""
+      }
+    ]
+  }, extra || {});
+}
+
+const DEFAULT_STATE = {
+  蜜语APP: {
+    当前页面: "discover",
+    当前角色: "",
+    钱包余额: 8888,
+    累计消费: 0,
+    图床域名: "https://【你的兰空域名】",
+    最新回复: "",
+    最新回复摘要: "",
+    最新回复时间: "",
+    最新回复序号: 0,
+    朋友圈刷新计数: 0
+  },
+  角色: {
+    林晓柔: defaultRole(ROLE_META[0]),
+    苏玥: defaultRole(ROLE_META[1]),
+    沈念: defaultRole(ROLE_META[2]),
+    叶桃: defaultRole(ROLE_META[3]),
+    方慧: defaultRole(ROLE_META[4])
+  },
+  朋友圈: {
+    动态列表: [
+      { id: "m1", 角色: "林晓柔", 内容: "今天刚洗完澡，吹头发的时候突然想起你了……", 时间: "刚刚", 图片: [], 点赞数: 9, 评论数: 2 },
+      { id: "m2", 角色: "苏玥", 内容: "下班，喝酒，洗澡。今晚谁表现好，谁就有奖励。", 时间: "18分钟前", 图片: [], 点赞数: 16, 评论数: 3 },
+      { id: "m3", 角色: "沈念", 内容: "睡不着的时候，人真的会想说很多平时不敢说的话……", 时间: "1小时前", 图片: [], 点赞数: 7, 评论数: 1 },
+      { id: "m4", 角色: "叶桃", 内容: "健身完冲澡，镜子有点好看。就是没人来夸。", 时间: "2小时前", 图片: [], 点赞数: 22, 评论数: 4 },
+      { id: "m5", 角色: "方慧", 内容: "成年人最危险的一句就是：只是想找个人聊聊。", 时间: "昨天", 图片: [], 点赞数: 14, 评论数: 5 }
+    ]
+  },
+  本次互动: {
+    对象: "",
+    类型: "日常",
+    金额: 0,
+    最新用户输入: "",
+    最新回复摘要: "",
+    好感变化: 0,
+    欲望变化: 0,
+    裸聊推进: "未开始"
+  }
+};
+
+const app = {
+  state: deepClone(DEFAULT_STATE),
+  currentPage: "discover",
+  previousPage: "discover",
+  currentRoleKey: "",
+  pending: {},
+  loadingRole: "",
+  lastReplySeq: 0,
+  syncTimer: null
+};
+
+function deepClone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function mergeState(base, patch) {
+  if (Array.isArray(base)) {
+    return Array.isArray(patch) ? patch : base;
+  }
+  if (base && typeof base === "object") {
+    const result = {};
+    const keys = new Set(Object.keys(base).concat(Object.keys(patch || {})));
+    keys.forEach(function(key) {
+      if (patch && Object.prototype.hasOwnProperty.call(patch, key)) {
+        if (
+          base[key] &&
+          typeof base[key] === "object" &&
+          !Array.isArray(base[key]) &&
+          patch[key] &&
+          typeof patch[key] === "object" &&
+          !Array.isArray(patch[key])
+        ) {
+          result[key] = mergeState(base[key], patch[key]);
+        } else {
+          result[key] = patch[key];
+        }
+      } else {
+        result[key] = base[key];
+      }
+    });
+    return result;
+  }
+  return patch === undefined ? base : patch;
+}
+
+function getRoleMetaByKey(roleKey) {
+  return ROLE_META.find(function(item) { return item.key === roleKey; });
+}
+
+function getRoleKeyById(roleId) {
+  const found = ROLE_META.find(function(item) { return item.id === roleId; });
+  return found ? found.key : "";
+}
+
+function getCurrentRoleKey() {
+  return app.currentRoleKey || ROLE_META[0].key;
+}
+
+function getRole(roleKey) {
+  return app.state.角色[roleKey];
+}
+
+function formatNow() {
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return hh + ":" + mm;
+}
+
+function escapeHtml(text) {
+  return String(text || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function toHtmlText(text) {
+  return escapeHtml(text).replace(/\n/g, "<br>");
+}
+
+function formatMoney(num) {
+  const n = Number(num || 0);
+  return "¥" + n.toLocaleString("zh-CN");
+}
+
+function resolveImageSrc(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw)) return raw;
+  const domain = String(app.state.蜜语APP.图床域名 || "").trim();
+  if (!domain || domain.indexOf("【") !== -1) return "";
+  return domain.replace(/\/$/, "") + "/" + encodeURI(raw).replace(/#/g, "%23");
+}
+
+function avatarHtml(roleKey, className) {
+  const role = getRole(roleKey);
+  if (!role) return "";
+  const cls = className || "avatar";
+  if (role.头像) {
+    return '<div class="' + cls + '"><img src="' + escapeHtml(role.头像) + '" alt="' + escapeHtml(role.名称) + '"></div>';
+  }
+  return '<div class="' + cls + '">' + escapeHtml(role.emoji || "♡") + "</div>";
+}
+
+function coverHtml(roleKey, className) {
+  const role = getRole(roleKey);
+  if (!role) return "";
+  if (role.封面) {
+    return '<div class="' + className + '"><img src="' + escapeHtml(role.封面) + '" alt="' + escapeHtml(role.名称) + '"></div>';
+  }
+  return '<div class="' + className + '"><div class="emoji-cover">' + escapeHtml(role.emoji || "♡") + "</div></div>";
+}
+
+function tagListHtml(tags) {
+  return (tags || []).map(function(tag) {
+    return '<span class="tag">' + escapeHtml(tag) + "</span>";
+  }).join("");
+}
+
+function getConversation(roleKey) {
+  const server = ((getRole(roleKey) || {}).聊天记录 || []).slice();
+  const pending = (app.pending[roleKey] || []).slice();
+  return server.concat(pending);
+}
+
+function renderDiscover() {
+  const grid = document.getElementById("girl-grid");
+  const roleKeys = ROLE_META.map(function(item) { return item.key; });
+  document.getElementById("discover-count").textContent = roleKeys.length + " 人在线";
+  grid.innerHTML = roleKeys.map(function(roleKey) {
+    const role = getRole(roleKey);
+    return [
+      '<div class="girl-card" data-profile="', role.id, '">',
+      coverHtml(roleKey, "girl-cover"),
+      '<div class="status-pill">', escapeHtml(role.当前状态 || "在线"), "</div>",
+      '<div class="girl-info">',
+      '<div class="girl-name-row"><span class="girl-name">', escapeHtml(role.名称), '</span><span class="girl-age">', escapeHtml(role.年龄), '岁</span><span class="girl-stage">', escapeHtml(role.关系阶段), "</span></div>",
+      '<div class="girl-intro">', escapeHtml(role.简介), "</div>",
+      '<div class="tag-list">', tagListHtml(role.标签), "</div>",
+      "</div></div>"
+    ].join("");
+  }).join("");
+}
+
+function renderProfile() {
+  const role = getRole(getCurrentRoleKey());
+  if (!role) return;
+  document.getElementById("profile-cover").innerHTML = role.封面
+    ? '<img src="' + escapeHtml(role.封面) + '" alt="' + escapeHtml(role.名称) + '">'
+    : '<div class="emoji-cover">' + escapeHtml(role.emoji || "♡") + "</div>";
+  document.getElementById("profile-avatar").innerHTML = role.头像
+    ? '<img src="' + escapeHtml(role.头像) + '" alt="' + escapeHtml(role.名称) + '">'
+    : escapeHtml(role.emoji || "♡");
+  document.getElementById("profile-name").textContent = role.名称;
+  document.getElementById("profile-meta").textContent = role.年龄 + "岁 / " + role.类型 + " / " + role.当前状态;
+  document.getElementById("profile-like").textContent = String(role.好感度 || 0);
+  document.getElementById("profile-desire").textContent = String(role.裸聊意愿 || 0);
+  document.getElementById("profile-stage").textContent = role.关系阶段 || "试探期";
+  document.getElementById("profile-bio").textContent = role.简介 || "";
+  document.getElementById("profile-tags").innerHTML = tagListHtml(role.标签);
+  document.getElementById("profile-want").textContent = role.当前想法 || "";
+}
+
+function renderMessages() {
+  const list = document.getElementById("message-list");
+  list.innerHTML = ROLE_META.map(function(item) {
+    const role = getRole(item.key);
+    const unread = app.currentPage === "chat" && app.currentRoleKey === item.key ? 0 : Number(role.未读数 || 0);
+    const avatarInner = role.头像
+      ? '<img src="' + escapeHtml(role.头像) + '" alt="' + escapeHtml(role.名称) + '">'
+      : escapeHtml(role.emoji || "♡");
+    const badge = unread > 0 ? '<span class="unread">' + unread + "</span>" : "";
+    return [
+      '<div class="message-card" data-chat="', escapeHtml(role.id), '">',
+      '<div class="avatar">', avatarInner, badge, "</div>",
+      '<div class="message-main"><div class="message-head"><strong>', escapeHtml(role.名称), '</strong><span>', escapeHtml(role.最后时间 || ""), '</span></div>',
+      '<div class="message-preview">', escapeHtml(role.最后消息 || "还没有开始聊天"), "</div></div></div>"
+    ].join("");
+  }).join("");
+}
+
+function bubbleContent(message) {
+  if (message.type === "transfer") {
+    return '<div class="transfer-card">转账成功<strong>' + formatMoney(message.amount || 0) + "</strong></div>";
+  }
+  if (message.type === "image") {
+    const src = resolveImageSrc(message.text);
+    if (src) {
+      return '<div class="bubble-image"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(message.text) + '"></div>';
+    }
+    return '<div class="bubble-image placeholder">图片占位：' + escapeHtml(message.text || "请替换图床域名") + "</div>";
+  }
+  if (message.type === "loading") {
+    return '<div class="typing"><span></span><span></span><span></span></div>';
+  }
+  return toHtmlText(message.text || "");
+}
+
+function renderChat() {
+  const roleKey = getCurrentRoleKey();
+  const role = getRole(roleKey);
+  if (!role) return;
+
+  document.getElementById("chat-stage").innerHTML =
+    "当前对象：<strong>" + escapeHtml(role.名称) + "</strong> / 阶段：<strong>" + escapeHtml(role.关系阶段 || "试探期") +
+    "</strong> / 裸聊意愿：" + escapeHtml(role.裸聊意愿 || 0) + " / 最近一句：" + escapeHtml(role.最后消息 || "暂无");
+
+  document.getElementById("quick-bar").innerHTML = QUICK_REPLIES.map(function(text) {
+    return '<button type="button" data-quick="' + escapeHtml(text) + '">' + escapeHtml(text) + "</button>";
+  }).join("");
+
+  document.getElementById("emoji-bar").innerHTML = EMOJIS.map(function(item) {
+    return '<button type="button" data-emoji="' + item + '">' + item + "</button>";
+  }).join("");
+
+  let messages = getConversation(roleKey);
+  if (app.loadingRole === roleKey) {
+    messages = messages.concat([{ role: "assistant", type: "loading", text: "", time: formatNow() }]);
+  }
+
+  const list = document.getElementById("chat-list");
+  if (!messages.length) {
+    list.innerHTML = '<div class="empty-state">这里还没有聊天记录。<br>先发一句话，APP 就会直接替你发到聊天里。</div>';
+  } else {
+    list.innerHTML = messages.map(function(message) {
+      const isMe = message.role === "user";
+      return [
+        '<div class="bubble-row', isMe ? " me" : "", '">',
+        isMe ? "" : avatarHtml(roleKey, "avatar"),
+        '<div class="bubble-wrap">',
+        '<div class="bubble-time">', escapeHtml(message.time || ""), "</div>",
+        '<div class="bubble">', bubbleContent(message), "</div>",
+        "</div></div>"
+      ].join("");
+    }).join("");
+  }
+  list.scrollTop = list.scrollHeight;
+}
+
+function renderMoments() {
+  const list = document.getElementById("moment-list");
+  const moments = ((app.state.朋友圈 || {}).动态列表 || []).slice();
+  if (!moments.length) {
+    list.innerHTML = '<div class="empty-state">还没有朋友圈动态。<br>随着聊天推进，这里会自己刷新。</div>';
+    return;
+  }
+  list.innerHTML = moments.map(function(moment) {
+    const roleKey = moment.角色;
+    const images = (moment.图片 || []).map(function(name) {
+      const src = resolveImageSrc(name);
+      if (src) {
+        return '<div class="moment-image"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(name) + '"></div>';
+      }
+      return '<div class="moment-image placeholder">' + escapeHtml(name) + "</div>";
+    }).join("");
+    return [
+      '<div class="moment-card">',
+      '<div class="moment-head">',
+      avatarHtml(roleKey, "avatar"),
+      "<div><strong>", escapeHtml(roleKey), "</strong><span>", escapeHtml(moment.时间 || ""), "</span></div></div>",
+      '<div class="moment-text">', toHtmlText(moment.内容 || ""), "</div>",
+      images ? '<div class="moment-gallery">' + images + "</div>" : "",
+      '<div class="moment-actions"><span>♡ ', escapeHtml(moment.点赞数 || 0), "</span><span>💬 ", escapeHtml(moment.评论数 || 0), "</span></div>",
+      "</div>"
+    ].join("");
+  }).join("");
+}
+
+function renderMine() {
+  document.getElementById("wallet-balance").textContent = formatMoney(app.state.蜜语APP.钱包余额 || 0);
+  document.getElementById("wallet-spent").textContent = formatMoney(app.state.蜜语APP.累计消费 || 0);
+}
+
+function updateTopbar() {
+  const back = document.getElementById("back-btn");
+  const action = document.getElementById("top-action");
+  const title = document.getElementById("top-title");
+  const subtitle = document.getElementById("top-subtitle");
+  const role = getRole(getCurrentRoleKey());
+  const needBack = app.currentPage === "profile" || app.currentPage === "chat";
+  back.classList.toggle("hidden", !needBack);
+  action.classList.toggle("hidden", app.currentPage !== "chat");
+
+  if (app.currentPage === "profile" && role) {
+    title.textContent = role.名称;
+    subtitle.textContent = role.类型 + " / " + role.关系阶段;
+  } else if (app.currentPage === "chat" && role) {
+    title.textContent = role.名称;
+    subtitle.textContent = role.当前状态 || "在线";
+  } else if (app.currentPage === "messages") {
+    title.textContent = "消息";
+    subtitle.textContent = "继续你们的私聊";
+  } else if (app.currentPage === "moments") {
+    title.textContent = "朋友圈";
+    subtitle.textContent = "她们会自己发动态";
+  } else if (app.currentPage === "mine") {
+    title.textContent = "我的";
+    subtitle.textContent = "钱包和玩法说明";
+  } else {
+    title.textContent = "发现";
+    subtitle.textContent = "在线裸聊匹配中";
+  }
+}
+
+function setActivePage(pageName) {
+  ["discover", "profile", "messages", "chat", "moments", "mine"].forEach(function(name) {
+    document.getElementById("page-" + name).classList.toggle("active", name === pageName);
+  });
+  document.querySelectorAll(".nav-item").forEach(function(btn) {
+    const raw = btn.getAttribute("data-page");
+    const activePage = pageName === "chat" ? "messages" : (pageName === "profile" ? "discover" : pageName);
+    btn.classList.toggle("active", raw === activePage);
+  });
+  app.previousPage = app.currentPage;
+  app.currentPage = pageName;
+  updateTopbar();
+  if (pageName === "profile") renderProfile();
+  if (pageName === "messages") renderMessages();
+  if (pageName === "chat") renderChat();
+  if (pageName === "moments") renderMoments();
+  if (pageName === "mine") renderMine();
+}
+
+function openProfile(roleId) {
+  const key = getRoleKeyById(roleId);
+  if (!key) return;
+  app.currentRoleKey = key;
+  setActivePage("profile");
+}
+
+function openChat(roleId) {
+  const key = getRoleKeyById(roleId);
+  if (!key) return;
+  app.currentRoleKey = key;
+  if (getRole(key)) {
+    getRole(key).未读数 = 0;
+  }
+  setActivePage("chat");
+}
+
+function goBack() {
+  if (app.currentPage === "chat") {
+    setActivePage("messages");
+  } else if (app.currentPage === "profile") {
+    setActivePage("discover");
+  } else {
+    setActivePage("discover");
+  }
+}
+
+function toggleEmojiBar() {
+  document.getElementById("emoji-bar").classList.toggle("show");
+}
+
+function openTransferModal() {
+  const role = getRole(getCurrentRoleKey());
+  document.getElementById("transfer-title").textContent = "转账给 " + (role ? role.名称 : "");
+  document.getElementById("transfer-input").value = "";
+  document.getElementById("transfer-modal").classList.add("show");
+}
+
+function closeTransferModal() {
+  document.getElementById("transfer-modal").classList.remove("show");
+}
+
+async function pushUserMessage(kind, content, amount) {
+  const roleKey = getCurrentRoleKey();
+  const role = getRole(roleKey);
+  if (!role) return;
+
+  const local = {
+    role: "user",
+    type: kind,
+    text: kind === "transfer" ? "转账" : String(content || ""),
+    amount: Number(amount || 0),
+    time: formatNow()
+  };
+  if (!app.pending[roleKey]) {
+    app.pending[roleKey] = [];
+  }
+  app.pending[roleKey].push(local);
+  app.loadingRole = roleKey;
+  renderChat();
+  renderMessages();
+
+  const raw = kind === "transfer" ? "[转账|" + amount + "]" : String(content || "");
+  try {
+    if (typeof createChatMessages === "function") {
+      await createChatMessages([{ role: "user", message: raw }], { refresh: "all" });
+      if (typeof triggerSlash === "function") {
+        await triggerSlash("/trigger");
+      }
+    }
+  } catch (error) {
+    console.warn("蜜语APP发送失败", error);
+  }
+}
+
+async function sendText() {
+  const input = document.getElementById("chat-input");
+  const text = String(input.value || "").trim();
+  if (!text) return;
+  input.value = "";
+  await pushUserMessage("text", text, 0);
+}
+
+async function sendEmoji(emoji) {
+  await pushUserMessage("text", emoji, 0);
+  document.getElementById("emoji-bar").classList.remove("show");
+}
+
+async function sendTransfer() {
+  const amount = Number(document.getElementById("transfer-input").value || 0);
+  if (!amount || amount <= 0) return;
+  closeTransferModal();
+  await pushUserMessage("transfer", "转账", amount);
+}
+
+function readLatestStatData() {
+  try {
+    if (typeof Mvu === "undefined" || !Mvu || typeof Mvu.getMvuData !== "function") {
+      return null;
+    }
+    const raw = Mvu.getMvuData({ type: "message", message_id: "latest" });
+    return raw && raw.stat_data ? raw.stat_data : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function syncFromMvu(forceRender) {
+  const statData = readLatestStatData();
+  if (!statData) {
+    if (forceRender) {
+      renderAll();
+    }
+    return;
+  }
+  app.state = mergeState(deepClone(DEFAULT_STATE), statData);
+  if (app.currentPage === "chat" && app.currentRoleKey && getRole(app.currentRoleKey)) {
+    getRole(app.currentRoleKey).未读数 = 0;
+  }
+  const latestSeq = Number(app.state.蜜语APP.最新回复序号 || 0);
+  if (latestSeq !== app.lastReplySeq) {
+    app.lastReplySeq = latestSeq;
+    const target = app.state.本次互动.对象;
+    if (target && app.pending[target]) {
+      app.pending[target] = [];
+    }
+    app.loadingRole = "";
+  }
+  if (!app.currentRoleKey) {
+    app.currentRoleKey = app.state.蜜语APP.当前角色 || ROLE_META[0].key;
+  }
+  renderAll();
+}
+
+function renderAll() {
+  renderDiscover();
+  renderMessages();
+  renderMoments();
+  renderMine();
+  if (app.currentPage === "profile") renderProfile();
+  if (app.currentPage === "chat") renderChat();
+  updateTopbar();
+}
+
+async function boot() {
+  app.currentRoleKey = ROLE_META[0].key;
+  renderAll();
+
+  try {
+    if (typeof waitGlobalInitialized === "function") {
+      await waitGlobalInitialized("Mvu");
+    }
+  } catch (error) {}
+
+  syncFromMvu(true);
+
+  if (typeof eventOn === "function" && typeof Mvu !== "undefined" && Mvu && Mvu.events) {
+    try {
+      eventOn(Mvu.events.VARIABLE_UPDATE_ENDED, function() {
+        setTimeout(function() {
+          syncFromMvu(false);
+        }, 60);
+      });
+    } catch (error) {}
+  }
+
+  if (!app.syncTimer) {
+    app.syncTimer = setInterval(function() {
+      syncFromMvu(false);
+    }, 1800);
+  }
+}
+
+document.getElementById("back-btn").addEventListener("click", goBack);
+document.getElementById("profile-chat").addEventListener("click", function() {
+  const role = getRole(getCurrentRoleKey());
+  if (role) openChat(role.id);
+});
+document.getElementById("profile-moments").addEventListener("click", function() {
+  setActivePage("moments");
+});
+document.getElementById("emoji-toggle").addEventListener("click", toggleEmojiBar);
+document.getElementById("transfer-open").addEventListener("click", openTransferModal);
+document.getElementById("transfer-cancel").addEventListener("click", closeTransferModal);
+document.getElementById("transfer-confirm").addEventListener("click", sendTransfer);
+document.getElementById("send-btn").addEventListener("click", sendText);
+document.getElementById("chat-input").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendText();
+  }
+});
+
+document.querySelectorAll(".nav-item").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    setActivePage(btn.getAttribute("data-page"));
+  });
+});
+
+document.getElementById("girl-grid").addEventListener("click", function(event) {
+  const card = event.target.closest("[data-profile]");
+  if (!card) return;
+  openProfile(card.getAttribute("data-profile"));
+});
+
+document.getElementById("message-list").addEventListener("click", function(event) {
+  const card = event.target.closest("[data-chat]");
+  if (!card) return;
+  openChat(card.getAttribute("data-chat"));
+});
+
+document.getElementById("quick-bar").addEventListener("click", function(event) {
+  const button = event.target.closest("[data-quick]");
+  if (!button) return;
+  document.getElementById("chat-input").value = button.getAttribute("data-quick");
+  sendText();
+});
+
+document.getElementById("emoji-bar").addEventListener("click", function(event) {
+  const button = event.target.closest("[data-emoji]");
+  if (!button) return;
+  sendEmoji(button.getAttribute("data-emoji"));
+});
+
+boot();
+</script>
+</body>
+</html>
